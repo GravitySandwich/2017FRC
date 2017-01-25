@@ -1,0 +1,127 @@
+package org.usfirst.frc.team3352.robot;
+ 
+import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.RobotDrive;
+ 
+import com.ctre.CANTalon;
+ 
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
+//import edu.wpi.first.wpilibj.interfaces.Gyro;
+//import edu.wpi.first.wpilibj.AnalogGyro;
+ 
+ 
+ 
+/**
+ * This is a demo program showing the use of the RobotDrive class, specifically
+ * it contains the code necessary to operate a robot with tank drive.
+ *
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the SampleRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ *
+ * WARNING: While it may look like a good choice to use for your code if you're
+ * inexperienced, don't. Unless you know what you are doing, complex code will
+ * be much more difficult under this system. Use IterativeRobot or Command-Based
+ * instead if you're new.
+ */
+ 
+public class Robot extends SampleRobot {
+   
+    // Talons for Drivetrain
+    CANTalon frontLeftMotor = new CANTalon(1);
+    CANTalon rearLeftMotor = new CANTalon(2);
+    CANTalon frontRightMotor = new CANTalon(3);
+    CANTalon rearRightMotor = new CANTalon(4);
+   
+    // Talon for Fuel Agitator
+    CANTalon agitator = new CANTalon(5);
+   
+    // Talon for Shooter
+    CANTalon shooter = new CANTalon(6);
+   
+    // Talon for Rope climb
+    CANTalon climberOne = new CANTalon(7);
+    CANTalon climberTwo = new CANTalon(8);
+   
+    //Gyro
+//  Gyro gyro;
+   
+    // class that handles basic drive
+    RobotDrive myRobot = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
+                                               
+    // operations for User Control
+    Joystick driver = new Joystick(0); // set to ID 1 in DriverStation
+    // Joystick operator = new Joystick(1); // set to ID 2 in DriverStation
+   
+ 
+   
+ 
+   
+   
+    public Robot() {
+        myRobot.setExpiration(0.1);
+    }
+ 
+    /**
+     * Runs the motors with tank steering.
+     */
+    @Override
+    public void operatorControl() {
+       
+        CameraServer.getInstance().startAutomaticCapture();
+    /*     
+        // Joystick Buttons and Analog sticks
+        double yLeftAxis = driver.getRawAxis(0);
+        double xLeftAxis = driver.getRawAxis(1);
+        double xRightAxis = driver.getRawAxis(4);
+        double deadZone = .1;
+       
+        while(Math.abs(driver.getRawAxis(0)) < deadZone)
+        {  
+            if(Math.abs(driver.getRawAxis(0)) < deadZone)
+            {
+                xLeftAxis = 0;
+            }
+            else
+            {
+                xLeftAxis = driver.getRawAxis(0);
+            }
+        }
+       
+        while(Math.abs(driver.getRawAxis(1)) < deadZone)
+        {  
+            if(Math.abs(driver.getRawAxis(1)) < deadZone)
+            {
+                yLeftAxis = 0;
+            }
+            else
+            {
+                yLeftAxis = driver.getRawAxis(1);
+            }
+        }
+       
+        while(Math.abs(driver.getRawAxis(4)) < deadZone)
+        {  
+            if(Math.abs(driver.getRawAxis(4)) < deadZone)
+            {
+                xRightAxis = 0;
+            }
+            else
+            {
+                xRightAxis = driver.getRawAxis(4);
+            }
+        }
+       
+        */
+        myRobot.setSafetyEnabled(true);
+        while (isOperatorControl() && isEnabled()) {
+            myRobot.mecanumDrive_Cartesian(driver.getRawAxis(0), driver.getRawAxis(1), driver.getRawAxis(4), 0);
+        //  myRobot.mecanumDrive_Cartesian(xLeftAxis, yLeftAxis, xRightAxis, 0);
+            Timer.delay(0.005); // wait for a motor update time
+        }
+    }
+}

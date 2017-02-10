@@ -1,0 +1,86 @@
+package org.usfirst.frc.team3352.robot;
+
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import com.ctre.CANTalon; 
+import edu.wpi.first.wpilibj.TalonSRX;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
+
+
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ */
+public class Robot extends IterativeRobot {
+	CANTalon motor = new CANTalon(1);
+	Encoder sensor = new Encoder(0,1,true,EncodingType.k1X)
+	PIDController pid = new PIDController(1,0.5,0,1,sensor,motor);
+
+
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		sensor.setDistancePerPulse((1.0/1020.0));
+		sensor.setPIDSourceType(PIDSourceType.kRate);
+		pid.setInputRange(-1, 1);
+		pid.setOutputRange(-1,1);
+	}
+
+	/**
+	 * This function is run once each time the robot enters autonomous mode
+	 */
+	@Override
+	public void autonomousInit() {
+		
+	}
+
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic() {
+		// Drive for 2 seconds
+		}
+
+	/**
+	 * This function is called once each time the robot enters tele-operated
+	 * mode
+	 */
+	@Override
+	public void teleopInit() {
+		pid.enable();
+		pid.setSetpoint(.5);
+		
+	}
+
+	/**
+	 * This function is called periodically during operator control
+	 */
+	@Override
+	public void teleopPeriodic() {
+		SmartDashboard.putNumber("Error", pid.getError());
+		SmartDashboard.putNumber("speed", sensor.getRate());
+		SmartDashboard.putNumber("pid",pid.get());
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	@Override
+	public void testPeriodic() {
+		LiveWindow.run();
+	}
+}

@@ -1,0 +1,172 @@
+package org.usfirst.frc.team3352.robot;
+
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.TalonSRX;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
+
+
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ */
+public class Robot extends IterativeRobot {
+	CANTalon motor = new CANTalon(1);
+	Joystick joy1 = new Joystick(0);	
+	StringBuilder _sb = new StringBuilder();
+	int _loops = 0;
+	double targetSpeed = 0;
+
+
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		motor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		motor.configEncoderCodesPerRev(16);
+		motor.setProfile(0);
+		motor.setF(3);
+		motor.setP(25);
+		motor.setI(0.025);
+		motor.setD(0);
+	    motor.configNominalOutputVoltage(+0.0f, -0.0f);
+	    motor.configPeakOutputVoltage(+12.0f, -12.0f);
+
+		}
+
+	/**
+	 * This function is run once each time the robot enters autonomous mode
+	 */
+	@Override
+	public void autonomousInit() {
+		
+	}
+
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic() {
+		}
+
+	/**
+	 * This function is called once each time the robot enters tele-operated
+	 * mode
+	 */
+	@Override
+	public void teleopInit() {
+	
+	}
+
+	/**
+	 * This function is called periodically during operator control
+	 */
+	@Override
+	public void teleopPeriodic() {
+		
+		/* get gamepad axis */
+        double leftYstick = joy1.getRawAxis(0);
+    	double motorOutput = motor.getOutputVoltage() / motor.getBusVoltage();
+    	/* prepare line to print */
+		_sb.append("\tout:");
+		_sb.append(motorOutput);
+        _sb.append("\tspd:");
+        _sb.append(motor.getSpeed() );
+        
+		if(joy1.getRawButton(1)){
+        	/* Speed mode - A */
+        	targetSpeed = leftYstick * 3000.0; /* 3000 to make full speed possible */
+        	motor.changeControlMode(TalonControlMode.Speed);
+        	motor.set(targetSpeed); /* 1500 RPM in either direction */
+        } 
+        else if(joy1.getRawButton(2)){
+        	/* Percent voltage mode */
+        	motor.changeControlMode(TalonControlMode.PercentVbus);
+        	motor.set(leftYstick);
+        }
+        
+        _sb.append("\terr:");
+        _sb.append(motor.getClosedLoopError());
+        _sb.append("\ttrg:");
+        _sb.append(targetSpeed);
+        SmartDashboard.putNumber("Target Speed",targetSpeed);
+        SmartDashboard.putNumber("Talon Command", motorOutput);
+		SmartDashboard.putNumber("Actual Speed", motor.getSpeed());
+		SmartDashboard.putNumber("Error", motor.getClosedLoopError());
+
+        if(++_loops >= 10) {
+        	_loops = 0;
+        	System.out.println(_sb.toString());
+        }
+        _sb.setLength(0);
+		
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	public void testInit()
+	{
+/*		pid.enable();
+		pid.setSetpoint(.1);
+	*/}
+	@Override
+	public void testPeriodic() {
+		/* get gamepad axis */
+        double leftYstick = joy1.getRawAxis(0);
+    	double motorOutput = motor.getOutputVoltage() / motor.getBusVoltage();
+    	/* prepare line to print */
+		_sb.append("\tout:");
+		_sb.append(motorOutput);
+        _sb.append("\tspd:");
+        _sb.append(motor.getSpeed() );
+        
+        if(joy1.getRawButton(1)){
+        	/* Speed mode */
+        	double targetSpeed;
+    		targetSpeed = SmartDashboard.getNumber("SetPoint", 0);
+    		
+
+/*        	double targetSpeed = leftYstick * 3000.0; *//* 3000 RPM in either direction */
+        	motor.changeControlMode(TalonControlMode.Speed);
+        	motor.set(targetSpeed); /* 1500 RPM in either direction */
+
+        	/* append more signals to print when in speed mode. */
+            _sb.append("\terr:");
+            _sb.append(motor.getClosedLoopError());
+            _sb.append("\ttrg:");
+            _sb.append(targetSpeed);
+    		SmartDashboard.putNumber("Target Speed",targetSpeed);
+        } else {
+        	/* Percent voltage mode */
+        	motor.changeControlMode(TalonControlMode.PercentVbus);
+        	motor.set(leftYstick);
+        }
+		SmartDashboard.putNumber("Command", motorOutput);
+		SmartDashboard.putNumber("Speed", motor.getSpeed());
+		SmartDashboard.putNumber("Error", motor.getClosedLoopError());
+
+        if(++_loops >= 10) {
+        	_loops = 0;
+        	System.out.println(_sb.toString());
+        }
+        _sb.setLength(0);
+	
+	}
+	
+}

@@ -76,8 +76,8 @@ public class Robot extends IterativeRobot implements PIDOutput
     double angle = 0;
     boolean buttonPressed = true;
     double deadZone = 0.10;
-    
-    
+    double increment = 0;
+    double decrement = 0; 
     
     static final double kP = 0.015;
     static final double kI = 0.00;
@@ -187,17 +187,15 @@ public class Robot extends IterativeRobot implements PIDOutput
         double leftYstick = operatorStick.getRawAxis(0);
         //boolean leftBumper = operatorStick.getRawButton(5);
         //boolean rightBumper = operatorStick.getRawButton(6);
-        double decrement = 0;
-        double increment = 0;
         
         if (operatorStick.getRawButton(5))
         {
-        	decrement += decrement + 25;
+        	decrement = decrement + 25;
         	
         }
         if (operatorStick.getRawButton(6))
         {
-        	increment += increment + 25;
+        	increment = increment + 25;
         }
         
     	double motorOutput = shooter.getOutputVoltage() / shooter.getBusVoltage();

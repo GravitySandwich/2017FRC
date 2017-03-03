@@ -76,8 +76,7 @@ public class Robot extends IterativeRobot implements PIDOutput
     double angle = 0;
     boolean buttonPressed = true;
     double deadZone = 0.10;
-    double increment = 0;
-    double decrement = 0; 
+    double targetSpeed1 = 2850; 
     
     static final double kP = 0.015;
     static final double kI = 0.00;
@@ -190,27 +189,33 @@ public class Robot extends IterativeRobot implements PIDOutput
         
         if (operatorStick.getRawButton(5))
         {
-        	decrement = decrement + 25;
-        	
+        	targetSpeed1 += 25;
+    		if(targetSpeed1>3000) {
+    			targetSpeed1=3000;
+    		}
+        	shooter.set(targetSpeed1); 
         }
         if (operatorStick.getRawButton(6))
         {
-        	increment = increment + 25;
+        	targetSpeed1 -= 25;
+    		if(targetSpeed1<0) {
+    			targetSpeed1=0;
+    		}
+        	shooter.set(targetSpeed1); 
         }
         
     	double motorOutput = shooter.getOutputVoltage() / shooter.getBusVoltage();
     	/* prepare line to print */
 		_sb.append("\tout:");
 		_sb.append(motorOutput);
-        _sb.append("\tspd:");
-        _sb.append(shooter.getSpeed());
         
+		
+		
 		if(operatorStick.getRawButton(1))
 		{
         	/* Speed mode - A */
-        	targetSpeed = 2850 + increment - decrement; /* 3000 to make full speed possible */
         	shooter.changeControlMode(TalonControlMode.Speed);
-        	shooter.set(targetSpeed); 
+        	shooter.set(targetSpeed1); 
         } 
         else if(operatorStick.getRawButton(2))
         {
@@ -220,12 +225,13 @@ public class Robot extends IterativeRobot implements PIDOutput
         	agitator.set(0.8);
         }
 
-
+        _sb.append("\tspd:");
+        _sb.append(shooter.getSpeed());
         _sb.append("\terr:");
         _sb.append(shooter.getClosedLoopError());
         _sb.append("\ttrg:");
-        _sb.append(targetSpeed);
-        SmartDashboard.putNumber("Target Speed",targetSpeed);
+        _sb.append(targetSpeed1);
+        SmartDashboard.putNumber("Target Speed",targetSpeed1);
         SmartDashboard.putNumber("Talon Command", motorOutput);
 		SmartDashboard.putNumber("Actual Speed", shooter.getSpeed());
 		SmartDashboard.putNumber("Error", shooter.getClosedLoopError());

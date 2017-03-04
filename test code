@@ -78,8 +78,8 @@ public class Robot extends IterativeRobot implements PIDOutput
     double deadZone = 0.10;
     double targetSpeed1 = 2850; 
     boolean toggle1 = false;
-    boolean toggle2 = false;
-    boolean toggle3 = false;
+    boolean toggle5 = false;
+    boolean toggle6 = false;
     
     static final double kP = 0.015;
     static final double kI = 0.00;
@@ -192,11 +192,11 @@ public class Robot extends IterativeRobot implements PIDOutput
        
         
         
-        if (toggle2 = false){
+        if (toggle5 == false){
         
         	if (operatorStick.getRawButton(5))
         {
-        		toggle2 = true;
+        		toggle5 = true;
         		targetSpeed1 += 25;
         		if(targetSpeed1>3000) {
     			shooter.changeControlMode(TalonControlMode.Speed);
@@ -204,16 +204,16 @@ public class Robot extends IterativeRobot implements PIDOutput
         		}
         		shooter.set(targetSpeed1);
         }
-        else if (toggle2 = true){
+        else if (toggle5 == true){
         	
         	if (! operatorStick.getRawButton(5)){
-        		toggle2 = false;
+        		toggle5 = false;
         	}
         
        }
       }
         
-        if (toggle3 = false){
+        if (toggle6 == false){
         	
         
         if (operatorStick.getRawButton(6))
@@ -226,9 +226,9 @@ public class Robot extends IterativeRobot implements PIDOutput
     		}
         	shooter.set(targetSpeed1); 
         }
-        else if (toggle3 = true){
+        else if (toggle6 == true){
         	if (! operatorStick.getRawButton(6)){
-        		toggle3 = false;
+        		toggle6 = false;
         	}
         }
         
@@ -239,7 +239,7 @@ public class Robot extends IterativeRobot implements PIDOutput
 		_sb.append("\tout:");
 		_sb.append(motorOutput);
         
-		if(toggle1 = false) //toggle shooter on button A (WIP)
+		if(toggle1 == false) //toggle shooter on button A (WIP)
 		{
 			if(operatorStick.getRawButton(1))
 			{
@@ -247,7 +247,7 @@ public class Robot extends IterativeRobot implements PIDOutput
 	        	shooter.changeControlMode(TalonControlMode.Speed);
 	        	shooter.set(targetSpeed1);
 			}
-		else if(toggle1 = true)
+		else if(toggle1 == true)
 		{
 			if (! operatorStick.getRawButton(1))
 			{
@@ -271,7 +271,7 @@ public class Robot extends IterativeRobot implements PIDOutput
         	shooter.changeControlMode(TalonControlMode.PercentVbus);
         	/*shooter.set(leftYstick);*/
         	shooter.set(targetSpeed1 / 3000); /* divide by 3000 for PercentVbus mode */
-        	agitator.set(0.8);
+        	agitator.set(-0.8);
         } 
 
         _sb.append("\tspd:");
@@ -284,8 +284,6 @@ public class Robot extends IterativeRobot implements PIDOutput
         SmartDashboard.putNumber("Talon Command", motorOutput);
 		SmartDashboard.putNumber("Actual Speed", shooter.getSpeed());
 		SmartDashboard.putNumber("Error", shooter.getClosedLoopError());
-		SmartDashboard.putboolean("Toggle1",toggle1);
-	
 
         if(++_loops >= 10) 
         {
@@ -300,7 +298,10 @@ public class Robot extends IterativeRobot implements PIDOutput
         {
         	agitator.set(-0.8);
         }
-    	
+        else {
+        	agitator.set(0);
+        }
+	
     	SmartDashboard.putNumber("Displcement_X", ahrs.getDisplacementX());
     	SmartDashboard.putNumber("Displacement_Y", ahrs.getDisplacementY());
     	
@@ -495,5 +496,5 @@ public class Robot extends IterativeRobot implements PIDOutput
     public void pidWrite(double output) 
     {
         rotateToAngleRate = output;
-} 
+    }	
 }

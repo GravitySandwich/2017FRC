@@ -284,6 +284,8 @@ public class Robot extends IterativeRobot implements PIDOutput
         SmartDashboard.putNumber("Talon Command", motorOutput);
 		SmartDashboard.putNumber("Actual Speed", shooter.getSpeed());
 		SmartDashboard.putNumber("Error", shooter.getClosedLoopError());
+		SmartDashboard.putboolean("Toggle1",toggle1);
+	
 
         if(++_loops >= 10) 
         {
@@ -493,5 +495,5 @@ public class Robot extends IterativeRobot implements PIDOutput
     public void pidWrite(double output) 
     {
         rotateToAngleRate = output;
-    }	
+} 
 }
